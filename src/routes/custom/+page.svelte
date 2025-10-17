@@ -11,8 +11,8 @@
   const PIXEL = 8;
 
   // Taille demi-tile pour isométrique
-  const TILE_WIDTH_HALF = -1;
-  const TILE_HEIGHT_HALF = 4;
+  const TILE_WIDTH_HALF = 32;  // largeur demi-tile
+  const TILE_HEIGHT_HALF = 16; // hauteur demi-tile
 
   function isoXY(x, y) {
     return {
@@ -21,39 +21,53 @@
     };
   }
 
-
-  function drawBuilding(x, y, h, color) {
-    const p = isoXY(x, y);
-    ctx.fillStyle = color;
-    ctx.fillRect(200, 200, 20, 20)
-  }
-
-  function drawCity() {
-    if (!ctx) return;
-    ctx.clearRect(0, 0, WIDTH, HEIGHT);
-    
+  // Dessine un bâtiment simple
+  function drawBuild1() {
     const points = [
-    { x: 64, y: 32 },  // haut
-    { x: 96, y: 48 },  // droite
-    { x: 64, y: 64 },  // bas
-    { x: 32, y: 48 }   // gauche
+      { x: 256, y: 64 },  // haut
+      { x: 64, y: 96 },  // droite
+      { x: 32, y: 144 },  // bas
+      { x: 224, y: 80 }   // gauche
     ];
-    
-    
-
 
     ctx.beginPath();
     ctx.moveTo(points[0].x, points[0].y);
     for (let i = 1; i < points.length; i++) {
       ctx.lineTo(points[i].x, points[i].y);
     }
-    ctx.closePath(); // relie le dernier point au premier
-    ctx.fillStyle = "#3498db"; // couleur de remplissage
-    ctx.fill(); // rempli la forme
-    ctx.strokeStyle = "#000"; // couleur du contour
-    ctx.stroke(); // trace le contour (facultatif)
+    ctx.closePath();
+    ctx.fillStyle = "#3498db";
+    ctx.fill();
+    ctx.strokeStyle = "#000";
+    ctx.stroke();
+  }
 
-   
+  // Dessine la grille isométrique
+function drawIsoGrid(cols = 10, rows = 10) {
+  ctx.strokeStyle = "#999";
+  ctx.lineWidth = 1;
+  ctx.font = "10px monospace";
+  ctx.fillStyle = "#000";
+
+  for (let x = 0; x <= cols; x++) {
+    for (let y = 0; y <= rows; y++) {
+      const p = isoXY(x, y);
+
+      // point sur la grille
+      ctx.fillRect(p.x - 2, p.y - 2, 4, 4);
+
+      // coordonnées réelles (canvas)
+      ctx.fillText(`(${Math.round(p.x)},${Math.round(p.y)})`, p.x + 5, p.y - 5);
+    }
+  }
+}
+
+  function drawCity() {
+    if (!ctx) return;
+    ctx.clearRect(0, 0, WIDTH, HEIGHT);
+
+    drawIsoGrid(10, 10); // dessine la grille
+    drawBuild1();        // dessine le bâtiment
   }
 
   onMount(async () => {
